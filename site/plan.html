@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Xenon 2 Megablast: how the work was planned</title>
+<meta name="description" content="Ten days from the first commit to v1.0.0: how the port of Xenon 2 Megablast to 50 frames a second was planned in iterations, epics, stories and tasks, and how the plan changed on the way.">
+<meta property="og:title" content="Xenon 2 Megablast: how the work was planned">
+<meta property="og:description" content="Ten days, eighteen epics, 293 tasks: the method behind the 50 fps port, and how the plan changed on the way.">
+<meta property="og:image" content="https://xenon2.sidecartridge.com/images/play.png">
+<meta property="og:url" content="https://xenon2.sidecartridge.com/plan.html">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://xenon2.sidecartridge.com/plan.html">
+<link rel="icon" href="images/icon.png">
+<link rel="preload" href="fonts/press-start-2p.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="vendor/cookieconsent.css">
+<script src="vendor/cookieconsent.js"></script>
+<script src="consent.js"></script>
+<!-- Google Analytics, the sidecartridge.com property, as on the SidecarTridge sites: cookieconsent runs
+     it only after the analytics category is accepted, and it loads gtag only on *.sidecartridge.com. -->
+<script type="text/plain" data-cookiecategory="analytics">
+    (function () {
+        var GA_ID = 'G-6VT9RXTJ2N';
+        if (!/(^|\.)sidecartridge\.com$/.test(location.hostname)) return;
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+        document.head.appendChild(s);
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function () { dataLayer.push(arguments); };
+        gtag('js', new Date());
+        gtag('config', GA_ID);
+    })();
+</script>
+</head>
+<body>
+<a class="skip" href="#start">Skip to the article</a>
+
+<header class="top">
+  <a class="name" href="index.html">Xenon 2 Megablast <span>50fps</span></a>
+  <nav aria-label="Links">
+    <a href="index.html">How it works</a>
+    <a href="plan.html" aria-current="page">The plan</a>
+    <a href="https://docs.sidecartridge.com/sidecartridge-multidevice/microfirmwares/xenon-2-megablast-50fps/">Play it</a>
+    <a href="https://github.com/sidecartridge/md-xenon-2">Source</a>
+  </nav>
+</header>
+
+<section class="hero" id="top">
+  <div class="hero-text">
+    <h1><span class="big">10</span> days from the first commit to v1.0.0</h1>
+    <p class="lede">The port's first commit is dated 16 October 2026; v1.0.0 was tagged on the
+    25th. In between, the work followed a plan written down before any code: what to find out,
+    what to build, in which order, and how each part would be checked on a real Atari ST.</p>
+    <p class="lede">This page is about that plan: the method, the path it took, and the places
+    where it changed its mind.</p>
+  </div>
+  <figure class="days" aria-labelledby="days-cap">
+    <div class="days-grid" role="img" aria-label="When each part of the game was merged, over the ten days from 16 to 25 October">
+      <span class="d-head" style="grid-column:2">16</span><span class="d-head" style="grid-column:3">17</span><span class="d-head" style="grid-column:4">18</span><span class="d-head" style="grid-column:5">19</span><span class="d-head" style="grid-column:6">20</span><span class="d-head" style="grid-column:7">21</span><span class="d-head" style="grid-column:8">22</span><span class="d-head" style="grid-column:9">23</span><span class="d-head" style="grid-column:10">24</span><span class="d-head" style="grid-column:11">25</span>
+      <span class="d-row">Workbench, first light</span><span class="d-bar r1" style="grid-column:2 / 3"></span>
+      <span class="d-row">Level 1's world</span><span class="d-bar r2" style="grid-column:3 / 4"></span>
+      <span class="d-row">The ship and the sound</span><span class="d-bar r3" style="grid-column:3 / 4"></span>
+      <span class="d-row">Enemies and bosses</span><span class="d-bar r4" style="grid-column:3 / 4"></span>
+      <span class="d-row">Weapons, shop, flow</span><span class="d-bar r5" style="grid-column:3 / 5"></span>
+      <span class="d-row">Levels 2 to 5</span><span class="d-bar r6" style="grid-column:4 / 12"></span>
+      <span class="d-row">Smooth paces</span><span class="d-bar r7" style="grid-column:11 / 12"></span>
+      <span class="d-row">Options, release</span><span class="d-bar r8" style="grid-column:11 / 12"></span>
+    </div>
+    <figcaption id="days-cap">October 2026, day by day: when each part of the plan was merged.
+    The first five came in three days; levels 2 to 5 took a week on one branch.</figcaption>
+  </figure>
+</section>
+
+<div class="layout">
+<nav class="contents" aria-label="Contents">
+  <p class="contents-title">On this page</p>
+  <ol>
+    <li><a href="#units">Four sizes of work</a></li>
+    <li><a href="#reverse">Reverse, then build</a></li>
+    <li><a href="#checkpoints">Nothing merges unseen</a></li>
+    <li><a href="#decisions">Decisions, written down</a></li>
+    <li><a href="#path">The path</a></li>
+    <li><a href="#changes">Where the plan changed</a></li>
+    <li><a href="#numbers">In numbers</a></li>
+    <li><a href="#private">Why the notes stay private</a></li>
+  </ol>
+</nav>
+
+<main id="start">
+
+<section id="units">
+<h2>Four sizes of work</h2>
+<p>The plan has four levels, each a different size of promise:</p>
+<dl class="facts">
+  <div><dt>Iteration</dt><dd>one goal that takes several epics, with a sentence saying when it is over. "Level 1's world" ends when level 1 scrolls end to end at a steady 50 frames a second on a plain ST and an STE.</dd></div>
+  <div><dt>Epic</dt><dd>a capability, such as the ship, the sound or the shop. Epics run one at a time, in order, and each ends at a checkpoint on real hardware.</dd></div>
+  <div><dt>Story</dt><dd>a slice of an epic that can be shown working: the map decoded, the scroll model, the effects driver.</dd></div>
+  <div><dt>Task</dt><dd>a checkbox inside a story. A task is ticked only when someone has seen it done, never because it was built.</dd></div>
+</dl>
+<p>The numbers on the plan are its order of execution, and a short script turns the checkboxes
+into a status page, epic by epic, so where the work stands is always one command away.</p>
+</section>
+
+<section id="reverse">
+<h2>Reverse, then build</h2>
+<p>The game's code had to be understood before it could be rewritten, so the first epics come in
+pairs. An analysis epic finds out what the original does: how it boots and loads, its real frame
+rate, its level formats, how the ship moves, how the sound driver works, how enemies follow their
+paths. Its findings go into notes that are reproduced on the original before anything is built
+on them. The build epic after it writes the C, checked against those notes and against the
+original running in Hatari.</p>
+<p>The first analysis set the whole project's terms. Measured in Hatari, the original shows 16.58
+frames a second over 384 frames of level 1: a frame every three vertical blanks, and now and then
+a fourth. From then on, "50 frames a second" meant three pictures for every one of the
+original's.</p>
+<p>Later epics, once the method was routine, carry their analysis as their first story instead of
+an epic of its own: the bosses, the weapons, the shop, each level from the second on.</p>
+</section>
+
+<section id="checkpoints">
+<h2>Nothing merges unseen</h2>
+<p>Every epic ends with a verification story, and that story belongs to the author: the epic is built,
+flashed onto a Multi-device and played on a real Atari ST before its work is merged. An analysis
+epic's checkpoint is its findings reproduced on the Mac.</p>
+<ol class="steps">
+  <li>A release branch is cut from the main branch, named after the version it will become.</li>
+  <li>Each epic gets its own branch, cut from the release branch.</li>
+  <li>The epic's pull request goes to the release branch, never to the main branch, and is merged
+  only after its checkpoint on hardware.</li>
+  <li>When the whole version is done, the release branch is merged into the main branch, once, and
+  only then tagged. The tag builds the release and publishes it.</li>
+</ol>
+<p>Every pull request also builds both firmware variants and runs the host tests, so the
+checkpoint on hardware judges the game, not whether it compiles. Timings that feed a decision are
+taken on a release build, never a debug one.</p>
+</section>
+
+<section id="decisions">
+<h2>Decisions, written down</h2>
+<p>Anything that cuts across epics is a numbered entry in a decisions log, with its date, who
+decided, the reason and its status: where the converted game lives, how sound reaches the ST,
+which machines count, what "50 frames a second" means for the game's speed. Stories cite an
+entry instead of arguing the point again. Beside the decisions sit the constraints (nothing from
+the game is ever committed; per-frame work never touches the card; the cartridge code stays under
+16 KB) and the facts about the original, each with its source.</p>
+<p>A decision that turns out wrong is not deleted. It is marked superseded and points at the one
+that replaced it, so the log shows how the project's thinking moved, which is what the next
+section is made from.</p>
+</section>
+
+<section id="path">
+<h2>The path</h2>
+<p>Eight iterations, in the order they ran. Each had its goal fixed before it started.</p>
+<ol class="path">
+  <li>
+    <h3>Workbench and first light</h3>
+    <p class="when">16 October</p>
+    <p>A scripted Hatari harness of the project's own; the loader, the disks' layout, the memory
+    map, the main loop and the real frame rate. Then the app on the framework: the user's disks
+    converted on the cartridge, and the title screen on an ST.</p>
+  </li>
+  <li>
+    <h3>Level 1's world</h3>
+    <p class="when">17 October</p>
+    <p>The performance proof, first because nothing else would matter without it. The level
+    formats decoded until a renderer on the computer matched the original pixel for pixel; then
+    the playfield drawn on the RP2040 and scrolling at 50 frames a second.</p>
+  </li>
+  <li>
+    <h3>The ship and the sound</h3>
+    <p class="when">17 October</p>
+    <p>The Megablaster decoded and flying, dying and coming back; the sound driver understood,
+    played back on the computer, then on the ST's own sound chip.</p>
+  </li>
+  <li>
+    <h3>Enemies and bosses</h3>
+    <p class="when">17 October</p>
+    <p>The waves and paths decoded, the enemies in play, level 1's end boss and the way to the
+    next level: level 1 playable from start to finish.</p>
+  </li>
+  <li>
+    <h3>The rest of the game</h3>
+    <p class="when">17 and 18 October</p>
+    <p>Every weapon and token and the dive; then Crispin's shop, the attract screens, two players,
+    continues and the high scores.</p>
+  </li>
+  <li>
+    <h3>Levels 2 to 5</h3>
+    <p class="when">18 to 25 October</p>
+    <p>Each level's own code moved behind a table of hooks, level 1 first, then each level ported
+    and checked against Hatari: its scenery, its mid boss, its end boss, and the ending after the
+    fifth.</p>
+  </li>
+  <li>
+    <h3>Smooth paces</h3>
+    <p class="when">25 October</p>
+    <p>How the game moves at 50 frames a second: the world a line every vertical blank, the
+    sprites at the original's speed drawn in between, or three times as fast.</p>
+  </li>
+  <li>
+    <h3>Options and the release</h3>
+    <p class="when">25 October</p>
+    <p>The options screen, the levels converted once at the first start, the documents, and the
+    tag.</p>
+  </li>
+</ol>
+</section>
+
+<section id="changes">
+<h2>Where the plan changed</h2>
+<p>A plan written before the work is a guess. These are the places where the work proved it
+wrong, as the decisions log records them.</p>
+
+<h3 class="turn">The game's speed, four times</h3>
+<p>The first plan ran the game's logic at 50 Hz with every movement scaled down to keep the
+original's speed. Then, during level 1, a debug key ran one original frame every vertical blank,
+everything three times as fast, and it was a different game, and a good one: it became an option.
+Next, after level 1's enemies, the plan became "the original's speed for everything, only
+smoother". The model that shipped came last, on an STE: the frame rate drives the scroll, and
+the sprites either keep the original's pace, drawn between their steps, or run at ×3. Four
+entries in the log, each superseding the one before.</p>
+
+<h3 class="turn">No interpreter, after all</h3>
+<p>On the second day the sound driver, and then the shop, ran the original's own 68000 code in an
+interpreter on the RP2040: quick to get right, since it was the original. A day later that was
+reversed for good: no 68000 interpreter in the firmware, for anything. The driver and the shop
+were rewritten in C like everything else, and checked write for write and pixel for pixel. An
+interpreter may still serve on the computer, as a reference while porting.</p>
+
+<h3 class="turn">Flash, measured</h3>
+<p>Where a level should live while it plays was left open until it could be measured. A converted
+level came to 150 to 262 KB against about 56 KB of free RAM, so the levels went to flash, read in
+place, with the RAM keeping only the map that the level's code rewrites.</p>
+
+<h3 class="turn">Four levels in one run</h3>
+<p>Levels 2 to 5 were planned as two epics with a checkpoint each. Once level 2's plan was
+approved, the remaining levels were ported in one run, each still checked against Hatari, and the
+smooth paces, planned for level 1 only, grew to cover all five levels since they were already
+built.</p>
+</section>
+
+<section id="numbers">
+<h2>In numbers</h2>
+<dl class="facts tally">
+  <div><dt>8</dt><dd>iterations</dd></div>
+  <div><dt>18</dt><dd>epics, 17 of them closed at a checkpoint: on the Mac for an analysis, on an ST for a build</dd></div>
+  <div><dt>93</dt><dd>stories, 89 of them done</dd></div>
+  <div><dt>293</dt><dd>tasks, 274 of them ticked</dd></div>
+  <div><dt>48</dt><dd>entries in the decisions log: 29 decisions, 8 constraints, 11 facts</dd></div>
+  <div><dt>19</dt><dd>pull requests to v1.0.0</dd></div>
+</dl>
+<p>What is not ticked is honest: one story set aside on purpose (rebuilding the original's single
+pool of objects, which the port does not need), an optional faster sound rate for the title, and
+the release gate's full check of the release build on an ST, an STE, a Mega ST and a Mega STE,
+which is still to run.</p>
+</section>
+
+<section id="private">
+<h2>Why the notes stay private</h2>
+<p>The plan lives on the developer's machine, outside the repository, and nothing committed
+names one of its items: no code comment, commit message or pull request says "as planned in such
+and such". A reader of the code cannot open the plan, so a pointer to it tells them nothing; the
+code and its comments say what they do and why, in full. The only place the plan shows is the
+name of each epic's branch. That is also why this page tells the path by what was done, not by
+the plan's numbers.</p>
+<p>The same layout, the same fields and the same status script are used across SidecarTridge's
+projects, so each one's work is tracked the same way.</p>
+</section>
+
+</main>
+</div>
+
+<footer class="foot">
+  <p>Xenon 2 Megablast 50fps for the <a href="https://sidecartridge.com">SidecarTridge Multi-device</a>.
+  <a href="index.html">How it works</a>.</p>
+</footer>
+</body>
+</html>
