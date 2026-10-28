@@ -408,3 +408,55 @@ main pre code { font: inherit; color: inherit; }
 .t td { padding: 0.45rem 0.75rem 0.45rem 0; vertical-align: top; border-bottom: 1px solid var(--rule); overflow-wrap: anywhere; }
 .t td:first-child { white-space: nowrap; }
 @media (max-width: 30rem) { .t td:first-child { white-space: normal; } }
+
+/* ---- the plan's page ---- */
+
+.top nav a[aria-current="page"] { color: var(--head); text-decoration: underline; text-underline-offset: 0.3em; }
+
+/* Ten days in columns, one row a part of the plan; the bars take the copper ramp in the order
+   the parts ran. */
+.days { margin: 0; }
+.days-grid {
+  display: grid;
+  grid-template-columns: minmax(9rem, 13rem) repeat(10, minmax(0, 1fr));
+  align-items: center;
+  gap: 0.35rem 3px;
+  font-size: 0.9rem;
+}
+.d-head { font: 0.55rem/1 var(--pixel); color: var(--muted); text-align: center; padding-bottom: 0.3rem; }
+.d-head:first-child { grid-row: 1; }
+.d-row { grid-column: 1; color: var(--text); line-height: 1.25; padding-right: 0.75rem; }
+.d-bar { height: 0.9rem; }
+.r1 { background: #ffff6d; } .r2 { background: #ffdb24; } .r3 { background: #ffb600; }
+.r4 { background: #ff6d00; } .r5 { background: #db2449; } .r6 { background: #b60092; }
+.r7 { background: #6d00b6; } .r8 { background: #6d6dff; }
+@media (max-width: 30rem) { .days-grid { grid-template-columns: minmax(6.5rem, 8rem) repeat(10, minmax(0, 1fr)); font-size: 0.8rem; } }
+
+.steps { padding-left: 1.4rem; }
+.steps li::marker { font: 0.6rem var(--pixel); color: var(--cart); }
+
+/* the path: a sequence, numbered, with its dates */
+.path { margin: 1.5rem 0 0; padding: 0; list-style: none; counter-reset: it; }
+.path li { position: relative; padding: 0 0 1.4rem 3rem; border-left: 2px solid var(--rule); margin-left: 0.6rem; counter-increment: it; }
+.path li:last-child { border-color: transparent; }
+.path li::before {
+  content: counter(it);
+  position: absolute;
+  left: -0.75rem;
+  top: 0;
+  width: 1.4rem;
+  height: 1.4rem;
+  display: grid;
+  place-items: center;
+  font: 0.6rem/1 var(--pixel);
+  color: var(--space);
+  background: var(--head);
+}
+.path h3 { margin: 0 0 0.2rem; font: 400 0.75rem/1.6 var(--pixel); color: var(--head); }
+.path .when { margin: 0 0 0.4rem; font-size: 0.95rem; font-style: italic; color: var(--muted); }
+.path p { margin: 0; }
+
+h3.turn { margin: 2rem 0 0.6rem; font: 400 0.75rem/1.6 var(--pixel); color: var(--cart); }
+
+.tally div { grid-template-columns: minmax(0, 5rem) minmax(0, 1fr); align-items: baseline; }
+.tally dt { font: 1.1rem/1.2 var(--pixel); color: var(--head); }
