@@ -375,3 +375,8 @@ docs, or any other artifact. This means **no**:
 
 Write the message as the human author. Do not mention AI tools used to
 produce the work.
+
+One exception, Diego's choice (2026-11-09): the website's credits
+(`site/index.html`, `#credits`) end with the same co-authorship line as the
+sibling site chorensha.sidecartridge.com. Leave it there; nothing else gets
+this exception.
