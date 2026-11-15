@@ -15,7 +15,7 @@
 # written by the host.
 set -euo pipefail
 
-IMAGE="${M68K_IMAGE:-logronoide/atarist-toolkit-docker-x86_64:1.4.0}"
+IMAGE="${M68K_IMAGE:-logronoide/atarist-toolkit-docker-x86_64:1.5.0}"
 
 if [[ $# -lt 3 || $# -gt 4 ]]; then
   echo "usage: $0 <bin> <vma> <out.lst> [arch]" >&2

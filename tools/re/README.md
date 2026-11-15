@@ -9,7 +9,7 @@ belongs outside the repository.
 ## Setup
 
 - Hatari (2.6.1 used here), Python 3 (standard library only), and Docker
-  with `logronoide/atarist-toolkit-docker-x86_64:1.4.0` for the 68000
+  with `logronoide/atarist-toolkit-docker-x86_64:1.5.0` for the 68000
   disassembler.
 - The original disks: the Image Works release from
   <https://www.atarimania.com/st/dumps/xenon_ii_-_megablast_imageworks.zip>
